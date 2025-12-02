@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="id" class="">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pengecek Unfollower Instagram</title>
+
+  <!-- Tailwind config (class-based dark mode) -->
+  <script>
+    tailwind = window.tailwind || {};
+    tailwind.config = { darkMode: 'class' };
+  </script>
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- App CSS -->
+  <link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+  <!-- Header -->
+  <header class="relative">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-br from-violet-600 via-indigo-600 to-sky-500"></div>
+    <div class="container mx-auto px-4 py-10">
+      <div class="glass rounded-2xl p-6 md:p-8">
+        <div class="flex flex-col md:flex-row items-start md:items-center md:justify-between gap-4">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-extrabold text-gray-900">Pengecek Unfollower Instagram</h1>
+            <p class="mt-1 text-gray-700">Cari tahu siapa yang tidak mengikuti Anda kembali, dan siapa yang jadi <span class="font-semibold">fans</span>.</p>
+            <p class="mt-2 text-xs md:text-sm font-semibold text-red-500">⚠️ Privasi Aman: Semua proses dilakukan <em>di browser Anda</em>. Tidak ada data yang diunggah.</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button id="btnToggle" class="btn-cta"
+              aria-expanded="false" aria-controls="uploadSection instruksiSection">
+              Cara Unduh Data
+            </button>
+            <button id="btnTheme" class="theme-btn" aria-pressed="false" title="Toggle theme">
+              <span id="themeIcon"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="container mx-auto px-4 pb-16">
+    <!-- Upload -->
+    <section id="uploadSection" class="mt-6 grid md:grid-cols-3 gap-6 view">
+      <div class="md:col-span-3 card p-6">
+        <h2 class="text-xl font-bold mb-1">Unggah Data Anda</h2>
+        <p class="text-sm text-gray-600 mb-4">Pilih file dari Instagram: <strong>followers_1.json</strong> dan <strong>following.json</strong> (boleh CSV).</p>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="p-4 rounded-xl dropzone bg-slate-50 card" data-type="followers" style="box-shadow: var(--shadow);">
+            <div class="flex items-center justify-between mb-3">
+              <span class="badge bg-emerald-100 text-emerald-700">Followers</span>
+              <label class="fake-btn bg-emerald-600 text-white hover:bg-emerald-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Pilih File
+                <input id="followersFile" type="file" accept=".json,.csv"/>
+              </label>
+            </div>
+            <div class="text-sm text-gray-600">Tarik & lepas file ke sini atau klik "Pilih File".</div>
+            <div id="followersFileName" class="mt-2 text-xs text-gray-500">Belum ada file</div>
+          </div>
+
+          <div class="p-4 rounded-xl dropzone bg-slate-50 card" data-type="following" style="box-shadow: var(--shadow);">
+            <div class="flex items-center justify-between mb-3">
+              <span class="badge bg-sky-100 text-sky-700">Following</span>
+              <label class="fake-btn bg-sky-600 text-white hover:bg-sky-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                Pilih File
+                <input id="followingFile" type="file" accept=".json,.csv"/>
+              </label>
+            </div>
+            <div class="text-sm text-gray-600">Tarik & lepas file ke sini atau klik "Pilih File".</div>
+            <div id="followingFileName" class="mt-2 text-xs text-gray-500">Belum ada file</div>
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-wrap items-center gap-3">
+          <button id="processBtn" class="px-5 py-3 rounded-xl font-bold text-white bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-500 hover:from-violet-700 hover:to-sky-600 shadow">
+            Cek Sekarang
+          </button>
+          <button id="btnClear" class="btn-reset px-4 py-3 rounded-xl font-semibold shadow">
+            Reset
+          </button>
+          <span id="status" class="text-sm text-gray-600"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Instruksi (toggle) -->
+    <section id="instruksiSection" class="mt-6 card p-6 view hidden" aria-hidden="true">
+      <div class="flex items-center justify-between gap-3">
+        <h2 class="text-xl font-bold">Cara mengunduh data dari Instagram</h2>
+        <!-- SINGLE language toggle button -->
+        <button id="btnLangToggle" class="btn-cta" aria-controls="lang-id lang-en" aria-label="Language toggle">ID</button>
+      </div>
+
+      <!-- ID -->
+      <div id="lang-id" class="lang-content active prose prose-sm max-w-none mt-4" role="tabpanel">
+        <ol class="list-decimal list-inside space-y-2">
+          <li>Buka <strong>Instagram</strong> → <strong>Profil</strong>.</li>
+          <li>Tap <strong>(☰)</strong> → masuk ke <strong>Pusat Akun</strong>.</li>
+          <li>Pilih <strong>Informasi dan izin Anda</strong>.</li>
+          <li>Pilih <strong>Ekspor informasi Anda</strong> → <strong>Buat ekspor</strong>.</li>
+          <li>Pilih <strong>profil</strong> yang ingin kamu ekspor.</li>
+          <li>Pilih <strong>Ekspor ke perangkat</strong>.</li>
+          <li>Sesuaikan <strong>format</strong> dan <strong>tanggal</strong> yang ingin kamu ekspor → di menu <strong>Sesuaikan informasi</strong> → pilih <strong>Koneksi</strong> → centang <strong>Pengikut & Mengikuti</strong>.</li>
+          <li>Klik <strong>Mulai ekspor</strong> → tunggu beberapa saat sampai muncul <strong>Download</strong>.</li>
+          <li>Ekstrak ZIP → buka folder <code>followers_and_following</code> → gunakan <code>followers_1.json</code> &amp; <code>following.json</code> di halaman ini.</li>
+        </ol>
+      </div>
+
+      <!-- EN -->
+      <div id="lang-en" class="lang-content prose prose-sm max-w-none mt-4" role="tabpanel" aria-hidden="true">
+        <ol class="list-decimal list-inside space-y-2">
+          <li>Open <strong>Instagram</strong> → go to your <strong>Profile</strong>.</li>
+          <li>Tap <strong>(☰)</strong> → go to the <strong>Accounts Center</strong>.</li>
+          <li>Select <strong>Your information and permissions</strong>.</li>
+          <li>Choose <strong>Download your information</strong> → <strong>Create export</strong>.</li>
+          <li>Select the <strong>profile</strong> you want to export.</li>
+          <li>Choose <strong>Export to device</strong>.</li>
+          <li>Adjust the <strong>format</strong> and <strong>date range</strong> you want to export → in <strong>Customize information</strong> → choose <strong>Connections</strong> → check <strong>Followers & Following</strong>.</li>
+          <li>Click <strong>Start export</strong> → wait a few moments until the <strong>Download</strong> appears.</li>
+          <li>Extract the ZIP → open <code>followers_and_following</code> → use <code>followers_1.json</code> &amp; <code>following.json</code> on this page.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- Hasil -->
+    <section id="results" class="mt-8 hidden">
+      <div class="card p-6 mb-6">
+        <div class="flex flex-wrap items-center gap-3">
+          <h2 class="text-2xl font-extrabold text-gray-900">Hasil</h2>
+          <span class="badge bg-emerald-100 text-emerald-700" id="followersCountBadge">Followers: 0</span>
+          <span class="badge bg-sky-100 text-sky-700" id="followingCountBadge">Following: 0</span>
+        </div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="card">
+          <div class="px-6 pt-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-bold">Tidak Mengikuti Anda Kembali <span class="badge bg-rose-100 text-rose-700" id="notFollowingBackCount">0</span></h3>
+              <input id="searchNotBack" type="search" placeholder="Cari username…" class="px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-violet-500 outline-none text-sm bg-transparent">
+            </div>
+            <p class="text-sm text-gray-600 mt-1 mb-4">Anda mengikuti mereka, tetapi mereka tidak mengikuti Anda.</p>
+          </div>
+          <div id="notFollowingBackList" class="list-scroll px-4 pb-4 space-y-1">
+            <div class="px-6"><div class="skeleton w-2/3 mt-2"></div><div class="skeleton w-1/2 mt-2"></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="px-6 pt-6">
+            <div class="flex items-center justify-between">
+              <h3 class="text-xl font-bold">Fans <span class="badge bg-indigo-100 text-indigo-700" id="fansCount">0</span></h3>
+              <input id="searchFans" type="search" placeholder="Cari username…" class="px-3 py-2 rounded-lg border border-gray-200 focus:ring-2 focus:ring-sky-500 outline-none text-sm bg-transparent">
+            </div>
+            <p class="text-sm text-gray-600 mt-1 mb-4">Mereka mengikuti Anda, tetapi Anda tidak mengikuti balik.</p>
+          </div>
+          <div id="fansList" class="list-scroll px-4 pb-4 space-y-1">
+            <div class="px-6"><div class="skeleton w-3/4 mt-2"></div><div class="skeleton w-1/3 mt-2"></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== Footer / Watermark + Socials ===== -->
+  <footer class="mt-12">
+    <div class="container mx-auto px-4">
+      <div class="card p-5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-sm text-gray-600">Dibuat oleh <span class="font-semibold">ilhmmmmn</span></p>
+        <div class="flex items-center gap-3">
+          <!-- Instagram -->
+          <a class="social ig" href="https://instagram.com/ilhmmn_/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+              <path d="M8 0C5.829 0 5.556.01 4.703.048 3.85.088 3.269.222 2.76.42a3.9 3.9 0 0 0-1.417.923A3.9 3.9 0 0 0 .42 2.76C.222 3.268.087 3.85.048 4.7.01 5.555 0 5.827 0 8.001c0 2.172.01 2.444.048 3.297.04.852.174 1.433.372 1.942.205.526.478.972.923 1.417.444.445.89.719 1.416.923.51.198 1.09.333 1.942.372C5.555 15.99 5.827 16 8 16s2.444-.01 3.298-.048c.851-.04 1.434-.174 1.943-.372a3.9 3.9 0 0 0 1.416-.923c.445-.445.718-.891.923-1.417.197-.509.332-1.09.372-1.942C15.99 10.445 16 10.173 16 8s-.01-2.445-.048-3.299c-.04-.851-.175-1.433-.372-1.941a3.9 3.9 0 0 0-.923-1.417A3.9 3.9 0 0 0 13.24.42c-.51-.198-1.092-.333-1.943-.372C10.443.01 10.172 0 7.998 0zm-.717 1.442h.718c2.136 0 2.389.007 3.232.046.78.035 1.204.166 1.486.275.373.145.64.319.92.599s.453.546.598.92c.11.281.24.705.275 1.485.039.843.047 1.096.047 3.231s-.008 2.389-.047 3.232c-.035.78-.166 1.203-.275 1.485a2.5 2.5 0 0 1-.599.919c-.28.28-.546.453-.92.598-.28.11-.704.24-1.485.276-.843.038-1.096.047-3.232.047s-2.39-.009-3.233-.047c-.78-.036-1.203-.166-1.485-.276a2.5 2.5 0 0 1-.92-.598 2.5 2.5 0 0 1-.6-.92c-.109-.281-.24-.705-.275-1.485-.038-.843-.046-1.096-.046-3.233s.008-2.388.46-3.231c.036-.78.166-1.204.276-1.486.145-.373.319-.64.599-.92s.546-.453.92-.598c.282-.11.705-.24 1.485-.276.738-.034 1.024-.044 2.515-.045zm4.988 1.328a.96.96 0 1 0 0 1.92.96.96 0 0 0 0-1.92m-4.27 1.122a4.109 4.109 0 1 0 0 8.217 4.109 4.109 0 0 0 0-8.217m0 1.441a2.667 2.667 0 1 1 0 5.334 2.667 2.667 0 0 1 0-5.334"/>
+            </svg>
+          </a>
+          <!-- TikTok -->
+          <a class="social tt" href="https://www.tiktok.com/@ilhmmmmn" target="_blank" rel="noopener noreferrer" aria-label="TikTok">
+            <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
+              <g transform="translate(8,6)">
+                <path d="M29.5248245,9.44576327 C28.0821306,9.0460898 26.7616408,8.29376327 25.6826204,7.25637551 C25.5109469,7.09719184 25.3493143,6.92821224 25.1928245,6.75433469 C23.9066204,5.27833469 23.209151,3.38037551 23.2336408,1.42290612 L17.3560898,1.42290612 L17.3560898,23.7086204 C17.3560898,27.7935184 15.1520082,29.9535184 12.416498,29.9535184 C11.694049,29.9611102 10.9789469,29.8107429 10.3213959,29.5124571 C9.6636,29.2144163 9.07951837,28.7758041 8.60955918,28.2272327 C8.1398449,27.6789061 7.79551837,27.0340898 7.60180408,26.3385796 C7.4078449,25.6430694 7.36890612,24.9132735 7.48743673,24.2008653 C7.60596735,23.4884571 7.87902857,22.8105796 8.28751837,22.2154776 C8.69625306,21.6198857 9.23037551,21.1212735 9.85241633,20.7546612 C10.474702,20.3878041 11.1694776,20.1617633 11.8882531,20.0924571 C12.6070286,20.023151 13.3324163,20.1122939 14.0129878,20.3535184 L14.0129878,14.3584163 C13.4889061,14.2430694 12.9530694,14.1862531 12.416498,14.1894367 L12.3917633,14.1894367 C10.2542939,14.1943347 8.16604898,14.8325388 6.39127347,16.0234776 C4.61649796,17.2149061 3.23429388,18.9051918 2.41976327,20.8812735 C1.60523265,22.8578449 1.39486531,25.0310694 1.8151102,27.1269061 C2.2351102,29.2227429 3.2671102,31.1469061 4.78033469,32.6564571 C6.29380408,34.1660082 8.22066122,35.1933551 10.3174776,35.6082122 C12.4142939,36.0230694 14.5870286,35.8073143 16.561151,34.9878857 C18.5355184,34.1682122 20.2226204,32.7820898 21.409151,31.0041306 C22.5959265,29.2264163 23.2289878,27.136702 23.228498,24.9992327 L23.228498,12.8155592 C25.5036,14.392702 28.2244163,15.134498 31.1289061,15.1886204 L31.1289061,9.68551837 C30.5869469,9.66568163 30.049151,9.5851102 29.5248245,9.44576327" fill="#FE2C55"/>
+                <path d="M25.195102,6.75428571 C24.7946939,6.47510204 24.4148571,6.1675102 24.0587755,5.83346939 C22.8210612,4.66016327 22.0062857,3.11020408 21.7420408,1.42530612 C21.6622041,0.954367347 21.6220408,0.47755102 21.6220408,0 L15.7444898,0 L15.7444898,22.6408163 C15.7444898,27.5069388 13.5404082,28.5183673 10.804898,28.5183673 C10.0829388,28.5262041 9.36783673,28.3758367 8.71028571,28.0773061 C8.0524898,27.7792653 7.46791837,27.3406531 6.99820408,26.7920816 C6.5282449,26.2437551 6.18440816,25.5989388 5.99044898,24.9034286 C5.7964898,24.2079184 5.75755102,23.4781224 5.87583673,22.7657143 C5.99461224,22.053551 6.26767347,21.3756735 6.67640816,20.7800816 C7.08489796,20.1847347 7.61902041,19.6861224 8.24106122,19.3195102 C8.86334694,18.952898 9.55787755,18.7266122 10.276898,18.6573061 C10.9959184,18.588 11.7208163,18.6773878 12.4016327,18.9183673 L12.4016327,12.9328163 C5.40489796,11.8236735 0,17.4783673 0,23.5760816 C0.00465306122,26.4426122 1.14514286,29.1898776 3.17191837,31.216898 C5.19869388,33.2434286 7.94595918,34.3839184 10.8124898,34.3885714 C16.7730612,34.3885714 21.6220408,30.7444898 21.6220408,23.5760816 L21.6220408,11.3924082 C23.8995918,12.9795918 26.6204082,13.7142857 29.524898,13.7632653 L29.524898,8.26040816 C27.9658776,8.18914286 26.4617143,7.66604082 25.195102,6.75428571" fill="#FFFFFF"/>
+                <path d="M21.6220653,23.5764245 L21.6220653,11.392751 C23.8996163,12.9794449 26.6204327,13.7141388 29.5251673,13.7633633 L29.5251673,9.44581224 C28.0822286,9.04613878 26.7617388,8.29381224 25.6824735,7.25617959 C25.5110449,7.09724082 25.3494122,6.92826122 25.1926776,6.75438367 C24.7922694,6.4752 24.4126776,6.16736327 24.056351,5.83356735 C22.8186367,4.66026122 22.0041061,3.11030204 21.7396163,1.42540408 L17.3730857,1.42540408 L17.3730857,23.7111184 C17.3730857,27.7957714 15.1690041,29.9560163 12.4334939,29.9560163 C11.6569224,29.9538122 10.8918612,29.7681796 10.2005143,29.414302 C9.50941224,29.0601796 8.91186122,28.5476082 8.45635102,27.9182204 C7.49071837,27.3946286 6.72712653,26.5636898 6.2865551,25.5571592 C5.84573878,24.5508735 5.75341224,23.4260571 6.02377959,22.3609959 C6.29390204,21.2959347 6.91177959,20.3516082 7.77896327,19.6771592 C8.64639184,19.0027102 9.71365714,18.6365878 10.8122694,18.6365878 C11.3564327,18.6412408 11.8961878,18.7362612 12.4090041,18.9182204 L12.4090041,14.1894857 C10.304351,14.1921796 8.24647347,14.8093224 6.48786122,15.9657306 C4.72924898,17.1221388 3.3470449,18.7666286 2.51047347,20.6978939 C1.67390204,22.6291592 1.41969796,24.7627102 1.77896327,26.8362612 C2.13822857,28.9098122 3.09553469,30.8334857 4.53308571,32.3704653 C6.36271837,33.6848327 8.55945306,34.3906286 10.8122694,34.3884296 C16.7730857,34.3884296 21.6220653,30.7445878 21.6220653,23.5764245" fill="#000000"/>
+              </g>
+            </svg>
+          </a>
+          <!-- YouTube -->
+          <a class="social yt" href="https://youtube.com/RifkyPermana" target="_blank" rel="noopener noreferrer" aria-label="YouTube">
+            <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+              <path d="M8.051 1.999h.089c.822.003 4.987.033 6.11.335a2.01 2.01 0 0 1 1.415 1.42c.101.38.172.883.22 1.402l.01.104.022.26.008.104c.065.914.073 1.77.074 1.957v.075c-.001.194-.01 1.108-.082 2.06l-.008.105-.009.104c-.05.572-.124 1.14-.235 1.558a2.01 2.01 0 0 1-1.415 1.42c-1.16.312-5.569.334-6.18.335h-.142c-.309 0-1.587-.006-2.927-.052l-.17-.006-.087-.004-.171-.007-.171-.007c-1.11-.049-2.167-.128-2.654-.26a2.01 2.01 0 0 1-1.415-1.419c-.111-.417-.185-.986-.235-1.558L.09 9.82l-.008-.104A31 31 0 0 1 0 7.68v-.123c.002-.215.01-.958.064-1.778l.007-.103.003-.052.008-.104.022-.26.01-.104c.048-.519.119-1.023.22-1.402a2.01 2.01 0 0 1 1.415-1.42c.487-.13 1.544-.21 2.654-.26l.17-.007.172-.006.086-.003.171-.007A100 100 0 0 1 7.858 2zM6.4 5.209v4.818l4.157-2.408z"/>
+            </svg>
+          </a>
+          <!-- Discord -->
+          <a class="social dc" href="https://discord.gg/mrVbK3NDYp" target="_blank" rel="noopener noreferrer" aria-label="Discord">
+            <svg viewBox="0 0 16 16" aria-hidden="true" fill="currentColor">
+              <path d="M13.545 2.907a13.2 13.2 0 0 0-3.257-1.011.05.05 0 0 0-.052.025c-.141.25-.297.577-.406.833a12.2 12.2 0 0 0-3.658 0 8 8 0 0 0-.412-.833.05.05 0 0 0-.052-.025c-1.125.194-2.22.534-3.257 1.011a.04.04 0 0 0-.021.018C.356 6.024-.213 9.047.066 12.032q.003.022.021.037a13.3 13.3 0 0 0 3.995 2.02.05.05 0 0 0 .056-.019q.463-.63.818-1.329a.05.05 0 0 0-.01-.059l-.018-.011a9 9 0 0 1-1.248-.595.05.05 0 0 1-.02-.066l.015-.019q.127-.095.248-.195a.05.05 0 0 1 .051-.007c2.619 1.196 5.454 1.196 8.041 0a.05.05 0 0 1 .053.007q.121.1.248.195a.05.05 0 0 1-.004.085 8 8 0 0 1-1.249.594.05.05 0 0 0-.03.03.05.05 0 0 0 .003.041c.24.465.515.909.817 1.329a.05.05 0 0 0 .056.019 13.2 13.2 0 0 0 4.001-2.02.05.05 0 0 0 .021-.037c.334-3.451-.559-6.449-2.366-9.106a.03.03 0 0 0-.02-.019m-8.198 7.307c-.789 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.45.73 1.438 1.613 0 .888-.637 1.612-1.438 1.612m5.316 0c-.788 0-1.438-.724-1.438-1.612s.637-1.613 1.438-1.613c.807 0 1.451.73 1.438 1.613 0 .888-.631 1.612-1.438 1.612"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- App JS -->
+  <script src="assets/script.js"></script>
+</body>
+</html>
